@@ -81,6 +81,42 @@ def extract_gemstone_info(img):
         split_values = df['SC'].str.split(',', expand=True)
         df['Shape'] = split_values[0]
         df['Cut'] = split_values[1]
+    elif len(lines) == 10:
+        df = pd.DataFrame({
+            'certNo': [lines[0]],
+            'Carat': [lines[1]],
+            'SC': [lines[2]],
+            'Dimensions': [lines[3]],
+            'Color': [lines[4]],
+            'Identification': [lines[5]],
+            'indications': [lines[9]],
+            'Origin': '']
+        })
+        df['certNo'] = df['certNo'].str.strip('No.')
+        df['Dimensions'] = df['Dimensions'].str.replace('mm', '')
+        df['Color'] = df['Color'].str.replace('of strong saturation', '').str.replace('of medium saturation', '').str.replace('of medium strong saturation','')
+        df['Origin'] = df['Origin'].str.extract(r'Origin:\s(\w+)', expand=False)
+        split_values = df['SC'].str.split(',', expand=True)
+        df['Shape'] = split_values[0]
+        df['Cut'] = split_values[1]
+    elif len(lines) == 12:
+        df = pd.DataFrame({
+            'certNo': [lines[0]],
+            'Carat': [lines[1]],
+            'SC': [lines[2]],
+            'Dimensions': [lines[3]],
+            'Color': [lines[4]],
+            'Identification': [lines[5]],
+            'indications': [lines[9],
+            'Origin':  [lines[11]]]
+        })
+        df['certNo'] = df['certNo'].str.strip('No.')
+        df['Dimensions'] = df['Dimensions'].str.replace('mm', '')
+        df['Color'] = df['Color'].str.replace('of strong saturation', '').str.replace('of medium saturation', '').str.replace('of medium strong saturation','')
+        df['Origin'] = df['Origin'].str.extract(r'Origin:\s(\w+)', expand=False)
+        split_values = df['SC'].str.split(',', expand=True)
+        df['Shape'] = split_values[0]
+        df['Cut'] = split_values[1]
     else:
         df = pd.DataFrame({
             'certNo': [lines[0]],
@@ -97,7 +133,7 @@ def extract_gemstone_info(img):
         })
         df['certNo'] = df['certNo'].str.strip('No.')
         df['Dimensions'] = df['Dimensions'].str.replace('mm', '')
-        df['Color'] = df['Color'].str.replace('of strong saturation', '').str.replace('of medium saturation', '')
+        df['Color'] = df['Color'].str.replace('of strong saturation', '').str.replace('of medium saturation', '').str.replace('of medium strong saturation','')
         df['Origin'] = df['Origin'].str.extract(r'Origin:\s(\w+)', expand=False)
         split_values = df['SC'].str.split(',', expand=True)
         df['Shape'] = split_values[0]
@@ -173,7 +209,7 @@ def reformat_issued_date(issued_date):
         return ""
     
 def detect_mogok(origin):
-    return "(Mogok, Myanmar)" in origin
+    return str("(Mogok, Myanmar)" in origin)
 
 
 def generate_indication(comment):
