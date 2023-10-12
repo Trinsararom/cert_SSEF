@@ -314,8 +314,7 @@ if zip_file is not None:
                         img = cv2.imdecode(np.frombuffer(img_data.read(), np.uint8), 0)
                         
                         # Process the image and perform data processing
-                        df = extract_gemstone_info(img)
-                        result_df = perform_data_processing(df)
+                        result_df = perform_data_processing(img)
     
                         result_df['StoneID'] = filename_without_suffix
                         result_df["StoneID"] = result_df["StoneID"].str.split("/")
