@@ -261,12 +261,32 @@ def convert_dimension(dimension_str):
 def rename_identification_to_stone(dataframe):
     # Rename "Identification" to "Stone"
     dataframe.rename(columns={"Identification": "Stone"}, inplace=True)
-    
+
+    # Define a dictionary to handle stone names dynamically
+    stone_name_modifications = {
+        "RUBY": "Ruby",
+        "SAPPHIRE": "Sapphire",
+        "STAR RUBY": "Star Ruby",
+        "CORUNDUM": "Corundum",
+        "EMERALD": "Emerald",
+        "PINK SAPPHIRE": "Pink Sapphire",
+        "PURPLE SAPPHIRE": "Purple Sapphire",
+        "SPINEL": "Spinel",
+        "TSAVORITE": "Tsavorite",
+        "BLUE SAPPHIRE": "Blue Sapphire",
+        "FANCY SAPPHIRE": "Fancy Sapphire",
+        "PERIDOT": "Peridot",
+        "PADPARADSCHA": "Padparadscha"
+        # Add more stone name modifications as needed
+    }
+
     # Remove unwanted words and trim spaces in the "Stone" column
     dataframe["Stone"] = dataframe["Stone"].str.replace("‘", "").str.strip()
 
-    # Define a list of gemstone names to detect
-    gemstone_names = ["Ruby", "corundum", "Emerald", "Pink Sapphire", "Purple Sapphire", "Sapphire", "Spinel", "Tsavorite", "Blue Sapphire", "Fancy Sapphire", "Peridot", "Padparadscha"]  # Add more gemstone names as needed
+    # Function to handle stone name modifications
+    def modify_stone_name(name):
+        modified_name = stone_name_modifications.get(name.upper(), name)
+        return modified_name
 
     # Function to remove "Natural" or "Star" from the stone name
     def remove_prefix(name):
@@ -274,8 +294,10 @@ def rename_identification_to_stone(dataframe):
             name = name.replace(prefix, "").strip()
         return name
 
-    # Detect and update the "Stone" column with the gemstone names (ignoring "Natural" or "Star")
-    dataframe["Stone"] = dataframe["Stone"].apply(lambda x: next((gem for gem in gemstone_names if gem in remove_prefix(x)), x))
+    # Update the "Stone" column with the dynamically modified names
+    dataframe["Stone"] = dataframe["Stone"].apply(
+        lambda x: modify_stone_name(remove_prefix(x))
+    )
 
     return dataframe
 
@@ -285,6 +307,7 @@ def perform_data_processing(img):
     result_df = extract_gemstone_info(img)
     
     result_df["Detected_Origin"] = result_df["Origin"].apply(detect_origin)
+    result_df["Detected_Origin"] = result_df["Detected_Origin"].str.replace('Ceylon','Sri Lanka')
     result_df["Indication"] = result_df["indications"].apply(generate_indication)
     result_df["oldHeat"] = result_df.apply(lambda row: detect_old_heat(row["indications"], row["Indication"]), axis=1)
     
