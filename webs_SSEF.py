@@ -22,15 +22,15 @@ def crop_image(img):
     height, width, channels = img.shape if len(img.shape) == 3 else (img.shape[0], img.shape[1], 1)
 
     # Calculate the coordinates for cropping crop1, crop2
-    top = int(height / 5.70731707317)
-    bottom = int(height / 1.56)
-    left_crop1 = int(width / 3.63555555556)
-    right_crop1 = int(width / 1.3088)
+    top = int(img.shape[0]  / 5.70731707317)
+    bottom = int(img.shape[0]  / 1.56)
+    left_crop1 = int(img.shape[1] / 3.63555555556)
+    right_crop1 = int(img.shape[1] / 1.3088)
 
-    top_crop2 = int(height / 1.33714285714)
-    bottom_crop2 = int(height / 1.21714285714)
-    left_crop2 = int(width / 16.36)
-    right_crop2 = int(width / 2)
+    top_crop2 = int(img.shape[0]  / 1.33714285714)
+    bottom_crop2 = int(img.shape[0] / 1.21714285714)
+    left_crop2 = int(img.shape[1]  / 16.36)
+    right_crop2 = int(img.shape[1]  / 2)
 
     # Crop the two parts
     crop1 = img[top:bottom, left_crop1:right_crop1]
