@@ -107,8 +107,8 @@ def extract_gemstone_info(img):
             'Dimensions': [lines[3]],
             'Color': [lines[4]],
             'Identification': [lines[5]],
-            'indications': [lines[9],
-            'Origin':  [lines[11]]]
+            'indications': [lines[9]],
+            'Origin':  [lines[11]]
         })
         df['certNo'] = df['certNo'].str.strip('No.')
         df['Dimensions'] = df['Dimensions'].str.replace('mm', '')
