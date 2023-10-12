@@ -59,28 +59,49 @@ def extract_gemstone_info(img):
     extracted_texts = extracted_texts.replace('‘', "'")
     lines = [line for line in extracted_texts.split('\n') if line.strip()]
     if len(lines) == 13:
-        df = pd.DataFrame({'Lines': lines})
-        df.loc[0] = df.loc[0].str.strip('No.')
-        df.loc[3, 'Lines'] = df.loc[3, 'Lines'].replace('mm', '')
-        df.loc[4, 'Lines'] = df.loc[4, 'Lines'].replace('of strong saturation', '').replace('of medium saturation', '')
-        df.loc[10] = df.loc[10].str.extract(r'Origin:\s(\w+)', expand=False)
-        df.loc[12] = df.loc[12].str.extract(r"'(.+)' based on SSEF reference standards", expand=False)
-        df = df.T.reset_index(drop=True)
-        split_values = df[2].str.split(',', expand=True)
-        df['Shape'], df['Cut'] = split_values[0], split_values[1]
-        df = df.rename(columns={0: 'certNo', 1:'Carat', 3:'Dimensions',4 : 'Color', 5:'Identification', 9:'indications', 10: 'Origin', 12: 'Color0'})
-        df = df.drop([2,6,7,8,11], axis=1)
+        df = pd.DataFrame({
+            'certNo': [lines[0]],
+            'Carat': [lines[1]],
+            'SC': [lines[2]],
+            'Dimensions': [lines[3]],
+            'Color': [lines[4]],
+            'Identification': [lines[5]],
+            'del': [lines[6]],
+            'del1': [lines[7]],
+            'del2': [lines[8]],
+            'indications': [lines[9]],
+            'Origin': [lines[10]],
+            'Color0': [lines[12]]
+        })
+        df['certNo'] = df['certNo'].str.strip('No.')
+        df['Dimensions'] = df['Dimensions'].str.replace('mm', '')
+        df['Color'] = df['Color'].str.replace('of strong saturation', '').str.replace('of medium saturation', '')
+        df['Origin'] = df['Origin'].str.extract(r'Origin:\s(\w+)', expand=False)
+        df['Color0'] = df['Color0'].str.extract(r"'(.+)' based on SSEF reference standards", expand=False)
+        split_values = df['SC'].str.split(',', expand=True)
+        df['Shape'] = split_values[0]
+        df['Cut'] = split_values[1]
     else:
-        df = pd.DataFrame({'Lines': lines})
-        df.loc[0] = df.loc[0].str.strip('No.')
-        df.loc[3, 'Lines'] = df.loc[3, 'Lines'].replace('mm', '')
-        df.loc[4, 'Lines'] = df.loc[4, 'Lines'].replace('of strong saturation', '').replace('of medium saturation', '')
-        df.loc[10] = df.loc[10].str.extract(r'Origin:\s(\w+)', expand=False)
-        df = df.T.reset_index(drop=True)
-        split_values = df[2].str.split(',', expand=True)
-        df['Shape'], df['Cut'] = split_values[0], split_values[1]
-        df = df.rename(columns={0: 'certNo', 1:'Carat', 3:'Dimensions',4 : 'Color', 5:'Identification', 9:'indications', 10: 'Origin'})
-        df = df.drop([2,6,7,8], axis=1)
+        df = pd.DataFrame({
+            'certNo': [lines[0]],
+            'Carat': [lines[1]],
+            'SC': [lines[2]],
+            'Dimensions': [lines[3]],
+            'Color': [lines[4]],
+            'Identification': [lines[5]],
+            'del': [lines[6]],
+            'del1': [lines[7]],
+            'del2': [lines[8]],
+            'indications': [lines[9]],
+            'Origin': [lines[10]]
+        })
+        df['certNo'] = df['certNo'].str.strip('No.')
+        df['Dimensions'] = df['Dimensions'].str.replace('mm', '')
+        df['Color'] = df['Color'].str.replace('of strong saturation', '').str.replace('of medium saturation', '')
+        df['Origin'] = df['Origin'].str.extract(r'Origin:\s(\w+)', expand=False)
+        split_values = df['SC'].str.split(',', expand=True)
+        df['Shape'] = split_values[0]
+        df['Cut'] = split_values[1]
 
     extracted_texts1 = process_cropped_images(crop2)
     lines1 = [line for line in extracted_texts1.split('\n') if line.strip()]
