@@ -381,7 +381,8 @@ if zip_file is not None:
                         result_df["StoneID"] = result_df["StoneID"].str.split("/")
                         # Get the last part of each split
                         result_df["StoneID"] = result_df["StoneID"].str.get(-1)
-                        result_df['carat'] = result_df['carat'].round(2).astype(float)
+                        result_df['carat'] = result_df['carat'].astype(float)
+                        result_df['carat'] = round(result_df['carat'], 2)
     
                         result_df = result_df[[
                             "certName",
