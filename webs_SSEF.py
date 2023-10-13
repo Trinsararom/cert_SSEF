@@ -125,9 +125,6 @@ def extract_gemstone_info(img):
             'Dimensions': [lines[3]],
             'Color': [lines[4]],
             'Identification': [lines[5]],
-            'del': [lines[6]],
-            'del1': [lines[7]],
-            'del2': [lines[8]],
             'indications': [lines[9]],
             'Origin': [lines[10]]
         })
@@ -301,6 +298,9 @@ def rename_identification_to_stone(dataframe):
 
     return dataframe
 
+def detect_vibrant(Vibrant):
+    return str("(Vibrant)" in Vibrant)
+
 # Define the function to perform all data processing steps
 def perform_data_processing(img):
     
@@ -327,6 +327,7 @@ def perform_data_processing(img):
     result_df["carat"] = result_df["Carat"].apply(convert_carat_to_numeric)
     result_df[["length", "width", "height"]] = result_df["Dimensions"].apply(convert_dimension).apply(pd.Series)
     result_df = rename_identification_to_stone(result_df)
+    result_df['Vibrant'] = result_df["Detected_Color"].apply(detect_vibrant)
 
     result_df = result_df[[
     "certName",
@@ -339,6 +340,7 @@ def perform_data_processing(img):
     "Indication",
     "oldHeat",
     "Mogok",
+    "Vibrant",
     "Detected_Cut",
     "Detected_Shape",
     "carat",
@@ -379,6 +381,7 @@ if zip_file is not None:
                         result_df["StoneID"] = result_df["StoneID"].str.split("/")
                         # Get the last part of each split
                         result_df["StoneID"] = result_df["StoneID"].str.get(-1)
+                        result_df['carat'] = round(result_df['carat'], 2)
     
                         result_df = result_df[[
                             "certName",
@@ -392,6 +395,7 @@ if zip_file is not None:
                             "Indication",
                             "oldHeat",
                             "Mogok",
+                            "Vibrant",
                             "Detected_Cut",
                             "Detected_Shape",
                             "carat",
