@@ -171,15 +171,24 @@ def detect_cut(cut):
         return "cab"
     else:
         return "cut"
-    
+        
 def detect_shape(shape):
+    shape_mapping = {
+        "antique cushion": "cushion",
+        "heart-shape": "heart",
+        # Add more mappings as needed
+    }
+
     valid_shapes = [
         "cushion", "heart", "marquise", "octagonal", "oval",
         "pear", "rectangular", "round", "square", "triangular",
         "star", "sugarloaf", "tumbled"
     ]
-    if shape in valid_shapes:
-        return shape
+
+    standardized_shape = shape_mapping.get(shape, "Others")
+
+    if standardized_shape in valid_shapes:
+        return standardized_shape
     else:
         return "Others"
     
@@ -210,16 +219,18 @@ def detect_mogok(origin):
 
 
 def generate_indication(comment):
-    if comment in ["H", "H(a)", "H(b)", "H(c)"]:
-        return "Heated"
-    else:
+    comment = str(comment).lower()
+    if "no indications of heating." in comment:
         return "Unheated"
+    else:
+        return "Heated"
     
 def detect_old_heat(comment, indication):
     if indication == "Heated":
-        if comment in ["H", "H(a)", "H(b)", "H(c)"]:
-            return "oldHeat"
-    return ""
+        return comment
+    else :
+        comment = ''
+        return comment
 
 def generate_display_name(color, Color_1, origin, indication, comment):
     display_name = ""
@@ -274,7 +285,6 @@ def rename_identification_to_stone(dataframe):
         "FANCY SAPPHIRE": "Fancy Sapphire",
         "PERIDOT": "Peridot",
         "PADPARADSCHA": "Padparadscha"
-        # Add more stone name modifications as needed
     }
 
     # Remove unwanted words and trim spaces in the "Stone" column
