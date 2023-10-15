@@ -92,10 +92,10 @@ def extract_gemstone_info(img):
             'indications': [lines[9]],
             'Origin': ['']
         })
-        df['certNo'] = df['certNo'].str.strip('No.')
+        #df['certNo'] = df['certNo'].str.strip('No.')
         df['Dimensions'] = df['Dimensions'].str.replace('mm', '')
         df['Color'] = df['Color'].str.replace('of strong saturation', '').str.replace('of medium saturation', '').str.replace('of medium strong saturation','')
-        df['Origin'] = df['Origin'].str.extract(r'Origin:\s(\w+)', expand=False)
+        #df['Origin'] = df['Origin'].str.extract(r'Origin:\s(\w+)', expand=False)
         split_values = df['SC'].str.split(',', expand=True)
         df['Shape'] = split_values[0]
         df['Cut'] = split_values[1]
@@ -338,6 +338,7 @@ def perform_data_processing(img):
     result_df[["length", "width", "height"]] = result_df["Dimensions"].apply(convert_dimension).apply(pd.Series)
     result_df = rename_identification_to_stone(result_df)
     result_df['Vibrant'] = result_df["Detected_Color"].apply(detect_vibrant)
+    result_df['certNO'] = result_df["certNO"].str.replace('No. ','')
 
     result_df = result_df[[
     "certName",
