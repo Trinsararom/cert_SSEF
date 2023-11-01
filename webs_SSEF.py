@@ -312,6 +312,24 @@ def detect_vibrant(Vibrant):
     Vibrant = str(Vibrant).lower() 
     return str("vibrant" in Vibrant)
 
+def create_vibrant(row):
+    def convert_color(color):
+        if 'Vividred' in color:
+            return 'VividRed'
+        elif 'Vividpink' in color:
+            return 'VividPink'
+        return color
+    
+    if row['Vibrant'] == 'True' and row['Indication'] == 'Heated':
+        modified_display_name = row['displayName'].replace('(H)','')
+        modified_color = row['Color'].replace(' ', '')
+        return f"{modified_display_name}({convert_color(modified_color)})(H)"
+    elif row['Vibrant'] == 'True':
+        modified_color = row['Color'].replace(' ', '')
+        return f"{row['displayName']}({convert_color(modified_color)})"
+    else:
+        return row['displayName']
+
 # Define the function to perform all data processing steps
 def perform_data_processing(img):
     
@@ -324,10 +342,14 @@ def perform_data_processing(img):
     
     if "Color0" in result_df and "Color" in result_df:
         result_df["Detected_Color"] = result_df.apply(lambda row: detect_color(row["Color0"]), axis=1)
+        result_df['Vibrant'] = result_df["Detected_Color"].apply(detect_vibrant)
         result_df["displayName"] = result_df.apply(lambda row: generate_display_name(row["Color0"], row['Detected_Color'], row["Detected_Origin"], row['Indication'], row['oldHeat']), axis=1)
+        result_df["displayName"] = result_df.apply(create_vibrant, axis=1)
     elif "Color" in result_df:
         result_df["Detected_Color"] = result_df.apply(lambda row: detect_color(row["Color"]), axis=1)
+        result_df['Vibrant'] = result_df["Detected_Color"].apply(detect_vibrant)
         result_df["displayName"] = result_df.apply(lambda row: generate_display_name(row["Color"], row['Detected_Color'], row["Detected_Origin"], row['Indication'], row['oldHeat']), axis=1)
+        result_df["displayName"] = result_df.apply(create_vibrant, axis=1)
 
     result_df["Detected_Cut"] = result_df["Cut"].apply(detect_cut)
     result_df["Detected_Shape"] = result_df["Shape"].apply(detect_shape)
@@ -338,7 +360,6 @@ def perform_data_processing(img):
     result_df["carat"] = result_df["Carat"].apply(convert_carat_to_numeric)
     result_df[["length", "width", "height"]] = result_df["Dimensions"].apply(convert_dimension).apply(pd.Series)
     result_df = rename_identification_to_stone(result_df)
-    result_df['Vibrant'] = result_df["Detected_Color"].apply(detect_vibrant)
     result_df['certNO'] = result_df["certNO"].str.replace('No. ','')
 
     result_df = result_df[[
